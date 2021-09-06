@@ -3,10 +3,20 @@ const url = require('url');
 
 const app = express();
 
+let store = '';
+
 app.use((req, res, next) => {
   const current = new Date();
   console.log(req.method, req.url, current);
   next();
+});
+app.use((req, rex, next) => {
+  req.on('data', (chunk) => {
+    store += chunk;
+  });
+  req.on('end', () => {
+    res.body = JSON.parse(store);
+  });
 });
 
 app.get('/', (req, res) => {
